@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weather <forecast-OpenWeatherMap></forecast-OpenWeatherMap></title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Weather in Redmond, US</h2>
+  <div id="weather-info"></div>
+</div>
+
+<script>
+const apiKey = 'e353e88d0b41842c29a54bf83f7742f8';
+
+
+async function fetchWeather() {
+  const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=Redmond,US&appid=${apiKey}`;
+  try {
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching weather data:', error);
+  }
+}
+
+// Function to convert Kelvin to Fahrenheit
+function kelvinToFahrenheit(kelvin) {
+  return (kelvin - 273.15) * 9/5 + 32;
+}
+
+// Function to display weather information
+function displayWeather(data) {
+  const { main, weather } = data;
+  const high = kelvinToFahrenheit(main.temp_max).toFixed(1);
+  const low = kelvinToFahrenheit(main.temp_min).toFixed(1);
+  const forecast = weather[0].description;
+
+  const weatherInfoDiv = document.getElementById('weather-info');
+  weatherInfoDiv.innerHTML = `
+    <p>High: ${high}°F</p>
+    <p>Low: ${low}°F</p>
+    <p>Forecast: ${forecast}</p>
+  `;
+}
+
+// Main function
+async function main() {
+  const weatherData = await fetchWeather();
+  if (weatherData) {
+    displayWeather(weatherData);
+  }
+}
+
+main();
+</script>
+</body>
+</html>
